@@ -8,6 +8,12 @@ const WEATHER_KEY = process.env.WEATHER_KEY;
 app.get("/weather/api", async (req, res) => {
   const { zipcode, date } = req.query;
 
+  if (!zipcode || !date) {
+    return res
+      .status(400)
+      .json({ error: "Please provide both zipcode and date." });
+  }
+
   console.log(date, zipcode);
   const result = await fetch(
     `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${zipcode}/${date}?key=${WEATHER_KEY}&contentType=json`
@@ -15,14 +21,22 @@ app.get("/weather/api", async (req, res) => {
 
   const data = await result.json();
   console.log(data);
-  const dayData = data.days[0];
-  const weather = {
-    date: dayData.datetime,
-    tempmax: dayData.tempmax,
-    tempmin: dayData.tempmin,
-    temp: dayData.temp,
-    description: dayData.conditions,
-  };
+
+  const days = data.days.filter((day) => day.datetime === date);
+
+  const weather = days.map((day) => ({
+    date: day.datetime,
+    temp: day.temp,
+  }));
+
+  // const dayData = data.days[0];
+  // const weather = {
+  //   date: dayData.datetime,
+  //   tempmax: dayData.tempmax,
+  //   tempmin: dayData.tempmin,
+  //   temp: dayData.temp,
+  //   description: dayData.conditions,
+  // };
   res.json(weather);
 });
 
