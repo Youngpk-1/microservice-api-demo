@@ -62,4 +62,5 @@ Status	Description	Example
 401	Invalid or missing API key	{ "error": "Not authorized" }
 500	External API error	{ "error": "Failed to fetch weather data" }
 
+created by Isaac Watson
 ```
