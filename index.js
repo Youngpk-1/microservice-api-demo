@@ -6,6 +6,13 @@ const PORT = 3001;
 const WEATHER_KEY = process.env.WEATHER_KEY;
 
 app.get("/weather/api", async (req, res) => {
+  const clientKey = req.headers["x-api-key"];
+  const validKey = process.env.SERVICE_KEY;
+  console.log(`Received Client Key: ${clientKey ? "present" : "missing"}`);
+  if (!clientKey || clientKey !== validKey) {
+    return res.status(401).json({ error: "Unauthorized: Invalid API Key" });
+  }
+
   const { zipcode, date } = req.query;
 
   if (!zipcode || !date) {
