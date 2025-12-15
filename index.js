@@ -10,15 +10,20 @@ app.get("/weather/api", async (req, res) => {
 
   console.log(date, zipcode);
   const result = await fetch(
-    `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/monroe%2C%20la?unitGroup=us&key=${WEATHER_KEY}&contentType=json&include=days`
+    `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${zipcode}/${date}?key=${WEATHER_KEY}&contentType=json`
   );
+
   const data = await result.json();
   console.log(data);
-  res.json({
-    zipcode,
-    date,
-    message: "Weather data retrieved successfully",
-  });
+  const dayData = data.days[0];
+  const weather = {
+    date: dayData.datetime,
+    tempmax: dayData.tempmax,
+    tempmin: dayData.tempmin,
+    temp: dayData.temp,
+    description: dayData.conditions,
+  };
+  res.json(weather);
 });
 
 app.listen(PORT, () => {
